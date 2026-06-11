@@ -1,5 +1,6 @@
 package library.app.com.entity;
 
+import library.app.com.entity.enums.Genre;
 import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;

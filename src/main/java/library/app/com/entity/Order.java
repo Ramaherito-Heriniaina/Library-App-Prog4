@@ -1,5 +1,6 @@
 package library.app.com.entity;
 
+import library.app.com.entity.enums.OrderStatus;
 import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

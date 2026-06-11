@@ -1,5 +1,6 @@
 package library.app.com.entity;
 
+import library.app.com.entity.enums.BookFormat;
 import lombok.*;
 
 @Getter
@@ -11,5 +12,5 @@ import lombok.*;
 public class BookCopy {
     private String id;
     private Book book;
-    private Format format;
+    private BookFormat format;
 }

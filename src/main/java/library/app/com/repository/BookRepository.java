@@ -1,22 +1,10 @@
 package library.app.com.repository;
 
-import library.app.com.repository.model.Book;
+import library.app.com.entity.Book;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Repository
-public class BookRepository {
+public interface BookRepository extends JpaRepository<Book, String> {
 
-    private final List<Book> books = new ArrayList<>();
-
-    public List<Book> findAll() {
-        return books;
-    }
-
-    public Book save(Book book) {
-        books.add(book);
-        return book;
-    }
 }
