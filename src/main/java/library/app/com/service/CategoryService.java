@@ -1,47 +1,30 @@
 package library.app.com.service;
 
-import com.librairie.dto.CategoryDTO;
+import library.app.com.entity.Category;
+import library.app.com.exception.NotFoundException;
+import library.app.com.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
 
-    private final CategoryRepository categoryRepository;
+    private final CategoryRepository repository;
 
-    public List<Category> findAll() {
-        return categoryRepository.findAll();
+    public List<Category> getAll(int page, int pageSize) {
+        return repository.findAll(PageRequest.of(page, pageSize))
+                .stream()
+                .map(Category::from)
+                .toList();
     }
 
-    public Category findById(Long id) {
-        return categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
-    }
-
-    public List<Category> findRootCategories() {
-        return categoryRepository.findByParentIsNull();
-    }
-
-    public List<Category> findChildren(Long parentId) {
-        return categoryRepository.findByParentId(parentId);
-    }
-
-    public static CategoryDTO toDTO(Category category) {
-        return CategoryDTO.builder()
-                .id(category.getId())
-                .name(category.getName())
-                .description(category.getDescription())
-                .build();
-    }
-
-    public List<CategoryDTO> findAllDTO() {
-        return findAll().stream().map(CategoryService::toDTO).collect(Collectors.toList());
-    }
-
-    public CategoryDTO findByIdDTO(Long id) {
-        return toDTO(findById(id));
+    public Category getById(Long id) {
+        return repository.findById(id)
+                .map(Category::from)
+                .orElseThrow(() -> new NotFoundException("Category #" + id + " not found"));
     }
 }

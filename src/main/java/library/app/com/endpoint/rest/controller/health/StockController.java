@@ -1,37 +1,28 @@
 package library.app.com.endpoint.rest.controller.health;
 
+import library.app.com.entity.Stock;
+import library.app.com.service.StockService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/stocks")
+@RequestMapping("/stocks")
 @RequiredArgsConstructor
 public class StockController {
 
-    private final StockService stockService;
+    private final StockService service;
 
     @GetMapping
-    public ResponseEntity<List<StockDTO>> getAll() {
-        return ResponseEntity.ok(stockService.findAllDTO());
+    public List<Stock> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int pageSize) {
+        return service.getAll(page, pageSize);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<StockDTO> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(stockService.findByIdDTO(id));
-    }
-
-    @GetMapping("/book/{bookId}")
-    public ResponseEntity<StockDTO> getByBook(@PathVariable Long bookId) {
-        return ResponseEntity.ok(stockService.toDTO(stockService.findByBook(bookId)));
-    }
-
-    @GetMapping("/low")
-    public ResponseEntity<List<StockDTO>> getLowStock() {
-        return ResponseEntity.ok(
-            stockService.findLowStock().stream()
-                .map(stockService::toDTO).toList()
-        );
+    public Stock getById(@PathVariable Long id) {
+        return service.getById(id);
     }
 }

@@ -1,50 +1,30 @@
 package library.app.com.service;
 
-import com.librairie.dto.StockDTO;
+import library.app.com.entity.Stock;
+import library.app.com.exception.NotFoundException;
 import library.app.com.repository.StockRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class StockService {
 
-    private final StockRepository stockRepository;
+    private final StockRepository repository;
 
-    public List<Stock> findAll() {
-        return stockRepository.findAll();
+    public List<Stock> getAll(int page, int pageSize) {
+        return repository.findAll(PageRequest.of(page, pageSize))
+                .stream()
+                .map(Stock::from)
+                .toList();
     }
 
-    public Stock findById(Long id) {
-        return stockRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Stock not found with id: " + id));
-    }
-
-    public Stock findByBook(Long bookId) {
-        return stockRepository.findByBookId(bookId)
-                .orElseThrow(() -> new RuntimeException("Stock not found for book id: " + bookId));
-    }
-
-    public List<Stock> findLowStock() {
-        return stockRepository.findByQuantityLessThanEqual(0);
-    }
-
-    public StockDTO toDTO(Stock stock) {
-        return StockDTO.builder()
-                .id(stock.getId())
-                .quantity(stock.getQuantity())
-                .alertThreshold(stock.getAlertThreshold())
-                .lastUpdated(stock.getLastUpdated())
-                .build();
-    }
-
-    public List<StockDTO> findAllDTO() {
-        return findAll().stream().map(this::toDTO).collect(Collectors.toList());
-    }
-
-    public StockDTO findByIdDTO(Long id) {
-        return toDTO(findById(id));
+    public Stock getById(Long id) {
+        return repository.findById(id)
+                .map(Stock::from)
+                .orElseThrow(() -> new NotFoundException("Stock #" + id + " not found"));
     }
 }

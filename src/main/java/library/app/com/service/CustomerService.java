@@ -1,48 +1,30 @@
-package com.librairie.service;
+package library.app.com.service;
 
-import com.librairie.dto.CustomerDTO;
-import com.librairie.entities.Customer;
-import com.librairie.repository.CustomerRepository;
+import library.app.com.entity.Customer;
+import library.app.com.exception.NotFoundException;
+import library.app.com.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class CustomerService {
 
-    private final CustomerRepository customerRepository;
+    private final CustomerRepository repository;
 
-    public List<Customer> findAll() {
-        return customerRepository.findAll();
+    public List<Customer> getAll(int page, int pageSize) {
+        return repository.findAll(PageRequest.of(page, pageSize))
+                .stream()
+                .map(Customer::from)
+                .toList();
     }
 
-    public Customer findById(Long id) {
-        return customerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Customer not found with id: " + id));
-    }
-
-    public Customer findByEmail(String email) {
-        return customerRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Customer not found with email: " + email));
-    }
-
-    public static CustomerDTO toDTO(Customer customer) {
-        return CustomerDTO.builder()
-                .id(customer.getId())
-                .firstName(customer.getFirstName())
-                .lastName(customer.getLastName())
-                .email(customer.getEmail())
-                .phone(customer.getPhone())
-                .build();
-    }
-
-    public List<CustomerDTO> findAllDTO() {
-        return findAll().stream().map(CustomerService::toDTO).collect(Collectors.toList());
-    }
-
-    public CustomerDTO findByIdDTO(Long id) {
-        return toDTO(findById(id));
+    public Customer getById(Long id) {
+        return repository.findById(id)
+                .map(Customer::from)
+                .orElseThrow(() -> new NotFoundException("Customer #" + id + " not found"));
     }
 }

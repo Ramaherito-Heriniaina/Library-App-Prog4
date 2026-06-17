@@ -1,44 +1,30 @@
 package library.app.com.service;
 
-import com.librairie.dto.AuthorDTO;
+import library.app.com.entity.Author;
+import library.app.com.exception.NotFoundException;
+import library.app.com.repository.AuthorRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class AuthorService {
 
-    private final AuthorRepository authorRepository;
+    private final AuthorRepository repository;
 
-    public List<Author> findAll() {
-        return authorRepository.findAll();
+    public List<Author> getAll(int page, int pageSize) {
+        return repository.findAll(PageRequest.of(page, pageSize))
+                .stream()
+                .map(Author::from)
+                .toList();
     }
 
-    public Author findById(Long id) {
-        return authorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Author not found with id: " + id));
-    }
-
-    public List<Author> findByLastName(String lastName) {
-        return authorRepository.findByLastNameContainingIgnoreCase(lastName);
-    }
-
-    public static AuthorDTO toDTO(Author author) {
-        return AuthorDTO.builder()
-                .id(author.getId())
-                .firstName(author.getFirstName())
-                .lastName(author.getLastName())
-                .nationality(author.getNationality())
-                .build();
-    }
-
-    public List<AuthorDTO> findAllDTO() {
-        return findAll().stream().map(AuthorService::toDTO).collect(Collectors.toList());
-    }
-
-    public AuthorDTO findByIdDTO(Long id) {
-        return toDTO(findById(id));
+    public Author getById(Long id) {
+        return repository.findById(id)
+                .map(Author::from)
+                .orElseThrow(() -> new NotFoundException("Author #" + id + " not found"));
     }
 }

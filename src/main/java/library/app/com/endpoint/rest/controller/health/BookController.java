@@ -1,44 +1,28 @@
 package library.app.com.endpoint.rest.controller.health;
 
+import library.app.com.entity.Book;
+import library.app.com.service.BookService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/books")
+@RequestMapping("/books")
 @RequiredArgsConstructor
 public class BookController {
 
-    private final BookService bookService;
+    private final BookService service;
 
     @GetMapping
-    public ResponseEntity<List<BookDTO>> getAll() {
-        return ResponseEntity.ok(bookService.findAllDTO());
+    public List<Book> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int pageSize) {
+        return service.getAll(page, pageSize);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BookDTO> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(bookService.findByIdDTO(id));
-    }
-
-    @GetMapping("/isbn/{isbn}")
-    public ResponseEntity<BookDTO> getByIsbn(@PathVariable String isbn) {
-        return ResponseEntity.ok(bookService.toDTO(bookService.findByIsbn(isbn)));
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<List<Book>> searchByTitle(@RequestParam String title) {
-        return ResponseEntity.ok(bookService.findByTitle(title));
-    }
-
-    @GetMapping("/author/{authorId}")
-    public ResponseEntity<List<Book>> getByAuthor(@PathVariable Long authorId) {
-        return ResponseEntity.ok(bookService.findByAuthor(authorId));
-    }
-
-    @GetMapping("/category/{categoryId}")
-    public ResponseEntity<List<Book>> getByCategory(@PathVariable Long categoryId) {
-        return ResponseEntity.ok(bookService.findByCategory(categoryId));
+    public Book getById(@PathVariable Long id) {
+        return service.getById(id);
     }
 }

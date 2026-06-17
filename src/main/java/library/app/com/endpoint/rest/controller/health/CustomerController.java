@@ -1,29 +1,28 @@
 package library.app.com.endpoint.rest.controller.health;
 
+import library.app.com.entity.Customer;
+import library.app.com.service.CustomerService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/customers")
+@RequestMapping("/customers")
 @RequiredArgsConstructor
 public class CustomerController {
 
-    private final CustomerService customerService;
+    private final CustomerService service;
 
     @GetMapping
-    public ResponseEntity<List<CustomerDTO>> getAll() {
-        return ResponseEntity.ok(customerService.findAllDTO());
+    public List<Customer> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int pageSize) {
+        return service.getAll(page, pageSize);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustomerDTO> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(customerService.findByIdDTO(id));
-    }
-
-    @GetMapping("/email/{email}")
-    public ResponseEntity<CustomerDTO> getByEmail(@PathVariable String email) {
-        return ResponseEntity.ok(CustomerService.toDTO(customerService.findByEmail(email)));
+    public Customer getById(@PathVariable Long id) {
+        return service.getById(id);
     }
 }

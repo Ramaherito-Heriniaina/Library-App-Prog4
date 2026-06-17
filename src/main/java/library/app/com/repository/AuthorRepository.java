@@ -1,11 +1,9 @@
 package library.app.com.repository;
 
+import library.app.com.endpoint.rest.model.JAuthor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import java.util.List;
 
 @Repository
-public interface AuthorRepository extends JpaRepository<Author, Long> {
-    List<Author> findByLastNameContainingIgnoreCase(String lastName);
-    List<Author> findByNationality(String nationality);
+public interface AuthorRepository extends JpaRepository<JAuthor, Long> {
 }

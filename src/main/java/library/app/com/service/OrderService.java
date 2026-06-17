@@ -1,59 +1,30 @@
 package library.app.com.service;
 
-import com.librairie.dto.OrderDTO;
-import com.librairie.dto.OrderItemDTO;
+import library.app.com.entity.Order;
+import library.app.com.exception.NotFoundException;
+import library.app.com.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class OrderService {
 
-    private final OrderRepository orderRepository;
+    private final OrderRepository repository;
 
-    public List<Order> findAll() {
-        return orderRepository.findAll();
+    public List<Order> getAll(int page, int pageSize) {
+        return repository.findAll(PageRequest.of(page, pageSize))
+                .stream()
+                .map(Order::from)
+                .toList();
     }
 
-    public Order findById(Long id) {
-        return orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
-    }
-
-    public List<Order> findByCustomer(Long customerId) {
-        return orderRepository.findByCustomerId(customerId);
-    }
-
-    public List<Order> findByStatus(Order.OrderStatus status) {
-        return orderRepository.findByStatus(status);
-    }
-
-    public OrderDTO toDTO(Order order) {
-        return OrderDTO.builder()
-                .id(order.getId())
-                .orderDate(order.getOrderDate())
-                .totalAmount(order.getTotalAmount())
-                .status(order.getStatus().name())
-                .customer(order.getCustomer() != null ?
-                    CustomerService.toDTO(order.getCustomer()) : null)
-                .orderItems(order.getOrderItems() != null ?
-                    order.getOrderItems().stream().map(item ->
-                        OrderItemDTO.builder()
-                            .id(item.getId())
-                            .quantity(item.getQuantity())
-                            .unitPrice(item.getUnitPrice())
-                            .build()
-                    ).collect(Collectors.toList()) : null)
-                .build();
-    }
-
-    public List<OrderDTO> findAllDTO() {
-        return findAll().stream().map(this::toDTO).collect(Collectors.toList());
-    }
-
-    public OrderDTO findByIdDTO(Long id) {
-        return toDTO(findById(id));
+    public Order getById(Long id) {
+        return repository.findById(id)
+                .map(Order::from)
+                .orElseThrow(() -> new NotFoundException("Order #" + id + " not found"));
     }
 }

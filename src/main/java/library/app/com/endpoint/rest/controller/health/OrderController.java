@@ -1,40 +1,28 @@
 package library.app.com.endpoint.rest.controller.health;
 
+import library.app.com.entity.Order;
+import library.app.com.service.OrderService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/orders")
+@RequestMapping("/orders")
 @RequiredArgsConstructor
 public class OrderController {
 
-    private final OrderService orderService;
+    private final OrderService service;
 
     @GetMapping
-    public ResponseEntity<List<OrderDTO>> getAll() {
-        return ResponseEntity.ok(orderService.findAllDTO());
+    public List<Order> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int pageSize) {
+        return service.getAll(page, pageSize);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<OrderDTO> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(orderService.findByIdDTO(id));
-    }
-
-    @GetMapping("/customer/{customerId}")
-    public ResponseEntity<List<OrderDTO>> getByCustomer(@PathVariable Long customerId) {
-        return ResponseEntity.ok(
-            orderService.findByCustomer(customerId).stream()
-                .map(orderService::toDTO).toList()
-        );
-    }
-
-    @GetMapping("/status/{status}")
-    public ResponseEntity<List<OrderDTO>> getByStatus(@PathVariable Order.OrderStatus status) {
-        return ResponseEntity.ok(
-            orderService.findByStatus(status).stream()
-                .map(orderService::toDTO).toList()
-        );
+    public Order getById(@PathVariable Long id) {
+        return service.getById(id);
     }
 }

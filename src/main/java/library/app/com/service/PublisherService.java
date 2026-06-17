@@ -1,40 +1,30 @@
 package library.app.com.service;
 
-import com.librairie.dto.PublisherDTO;
+import library.app.com.entity.Publisher;
+import library.app.com.exception.NotFoundException;
+import library.app.com.repository.PublisherRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class PublisherService {
 
-    private final PublisherRepository publisherRepository;
+    private final PublisherRepository repository;
 
-    public List<Publisher> findAll() {
-        return publisherRepository.findAll();
+    public List<Publisher> getAll(int page, int pageSize) {
+        return repository.findAll(PageRequest.of(page, pageSize))
+                .stream()
+                .map(Publisher::from)
+                .toList();
     }
 
-    public Publisher findById(Long id) {
-        return publisherRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Publisher not found with id: " + id));
-    }
-
-    public static PublisherDTO toDTO(Publisher publisher) {
-        return PublisherDTO.builder()
-                .id(publisher.getId())
-                .name(publisher.getName())
-                .email(publisher.getEmail())
-                .phone(publisher.getPhone())
-                .build();
-    }
-
-    public List<PublisherDTO> findAllDTO() {
-        return findAll().stream().map(PublisherService::toDTO).collect(Collectors.toList());
-    }
-
-    public PublisherDTO findByIdDTO(Long id) {
-        return toDTO(findById(id));
+    public Publisher getById(Long id) {
+        return repository.findById(id)
+                .map(Publisher::from)
+                .orElseThrow(() -> new NotFoundException("Publisher #" + id + " not found"));
     }
 }

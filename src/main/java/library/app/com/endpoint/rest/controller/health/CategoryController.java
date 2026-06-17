@@ -1,34 +1,28 @@
 package library.app.com.endpoint.rest.controller.health;
 
+import library.app.com.entity.Category;
+import library.app.com.service.CategoryService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/categories")
+@RequestMapping("/categories")
 @RequiredArgsConstructor
 public class CategoryController {
 
-    private final CategoryService categoryService;
+    private final CategoryService service;
 
     @GetMapping
-    public ResponseEntity<List<CategoryDTO>> getAll() {
-        return ResponseEntity.ok(categoryService.findAllDTO());
+    public List<Category> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int pageSize) {
+        return service.getAll(page, pageSize);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryDTO> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(categoryService.findByIdDTO(id));
-    }
-
-    @GetMapping("/roots")
-    public ResponseEntity<List<Category>> getRootCategories() {
-        return ResponseEntity.ok(categoryService.findRootCategories());
-    }
-
-    @GetMapping("/{parentId}/children")
-    public ResponseEntity<List<Category>> getChildren(@PathVariable Long parentId) {
-        return ResponseEntity.ok(categoryService.findChildren(parentId));
+    public Category getById(@PathVariable Long id) {
+        return service.getById(id);
     }
 }
