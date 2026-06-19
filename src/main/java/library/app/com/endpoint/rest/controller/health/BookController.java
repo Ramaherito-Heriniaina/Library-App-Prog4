@@ -32,4 +32,9 @@ public class BookController {
     public JBook updateBook(@PathVariable Long id, @RequestBody JBook book) {
         return service.updateBook(id, book);
     }
+
+    @DeleteMapping("/{id}")
+    public void deleteBook(@PathVariable Long id) {
+        service.deleteBook(id);
+    }
 }

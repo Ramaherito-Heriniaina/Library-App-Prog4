@@ -44,4 +44,11 @@ public class BookService {
         return repository.save(existingBook);
 
     }
+    public void deleteBook(Long id) {
+        if (!repository.existsById(id)) {
+            throw new RuntimeException("Book not found");
+        }
+
+        repository.deleteById(id);
+    }
 }
