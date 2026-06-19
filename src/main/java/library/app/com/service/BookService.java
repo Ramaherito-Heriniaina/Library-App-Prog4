@@ -1,5 +1,6 @@
 package library.app.com.service;
 
+import library.app.com.endpoint.rest.model.JBook;
 import library.app.com.entity.Book;
 import library.app.com.exception.NotFoundException;
 import library.app.com.repository.BookRepository;
@@ -14,6 +15,7 @@ import java.util.List;
 public class BookService {
 
     private final BookRepository repository;
+    private final BookRepository bookRepository;
 
     public List<Book> getAll(int page, int pageSize) {
         return repository.findAll(PageRequest.of(page, pageSize))
@@ -26,5 +28,29 @@ public class BookService {
         return repository.findById(id)
                 .map(Book::from)
                 .orElseThrow(() -> new NotFoundException("Book #" + id + " not found"));
+    }
+    public JBook updateBook(Long id, JBook book) {
+        JBook existingBook = repository.findById(id)
+                        .orElseThrow(() -> new RuntimeException("Book not found"));
+        existingBook.setTitle(book.getTitle());
+        existingBook.setIsbn(book.getIsbn());
+        existingBook.setPriceExTax(book.getPriceExTax());
+        existingBook.setPriceInclTax(book.getPriceInclTax());
+        existingBook.setVat(book.getVat());
+        existingBook.setPageCount(book.getPageCount());
+        existingBook.setLanguage(book.getLanguage());
+        existingBook.setFormat(book.getFormat());
+
+        return repository.save(existingBook);
+
+    }
+    public void deleteBook(Long id) {
+
+        if (!repository.existsById(id)) {
+
+            throw new RuntimeException("Book not found");
+        }
+
+        repository.deleteById(id);
     }
 }
