@@ -45,7 +45,9 @@ public class BookService {
 
     }
     public void deleteBook(Long id) {
+
         if (!repository.existsById(id)) {
+
             throw new RuntimeException("Book not found");
         }
 
