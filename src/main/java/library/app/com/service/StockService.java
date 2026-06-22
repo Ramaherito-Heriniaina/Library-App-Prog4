@@ -27,4 +27,17 @@ public class StockService {
                 .map(Stock::from)
                 .orElseThrow(() -> new NotFoundException("Stock #" + id + " not found"));
     }
+
+    public Stock getStockByBookId(Long bookId) {
+        return repository.findByBookId(bookId)
+                .map(Stock::from)
+                .orElseThrow(() -> new NotFoundException("Stock for Book #" + bookId + " not found"));
+    }
+
+    public List<Stock> getAllStocks() {
+        return repository.findAll()
+                .stream()
+                .map(Stock::from)
+                .toList();
+    }
 }
