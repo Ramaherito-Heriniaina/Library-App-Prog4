@@ -1,5 +1,6 @@
 package library.app.com.service;
 
+import library.app.com.endpoint.rest.model.JAuthor;
 import library.app.com.entity.Author;
 import library.app.com.exception.NotFoundException;
 import library.app.com.repository.AuthorRepository;
@@ -15,16 +16,23 @@ public class AuthorService {
 
     private final AuthorRepository repository;
 
-    public List<Author> getAll(int page, int pageSize) {
-        return repository.findAll(PageRequest.of(page, pageSize))
-                .stream()
-                .map(Author::from)
-                .toList();
+    public List<JAuthor> getAll(int page, int pageSize) {
+        return repository.findAll(PageRequest.of(page, pageSize)).getContent();
     }
 
-    public Author getById(Long id) {
+    public JAuthor getById(Long id) {
         return repository.findById(id)
-                .map(Author::from)
                 .orElseThrow(() -> new NotFoundException("Author #" + id + " not found"));
+    }
+
+    public JAuthor createOrUpdate(JAuthor author) {
+        return repository.save(author);
+    }
+
+    public void deleteById(Long id) {
+        if (!repository.existsById(id)) {
+            throw new NotFoundException("Author #" + id + " not found");
+        }
+        repository.deleteById(id);
     }
 }

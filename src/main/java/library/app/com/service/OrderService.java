@@ -27,4 +27,15 @@ public class OrderService {
                 .map(Order::from)
                 .orElseThrow(() -> new NotFoundException("Order #" + id + " not found"));
     }
+
+    public Order createOrUpdate(Order order) {
+        return Order.from(repository.save(order));
+    }
+
+    public void deleteById(Long id) {
+        if (!repository.existsById(id)) {
+            throw new NotFoundException("Order #" + id + " not found");
+        }
+        repository.deleteById(id);
+    }
 }

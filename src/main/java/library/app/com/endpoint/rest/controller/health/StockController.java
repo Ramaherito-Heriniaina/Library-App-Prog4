@@ -25,4 +25,20 @@ public class StockController {
     public Stock getById(@PathVariable Long id) {
         return service.getById(id);
     }
+
+    @PostMapping
+    public Stock create(@RequestBody Stock stock) {
+        return service.createOrUpdate(stock);
+    }
+
+    @PutMapping("/{id}")
+    public Stock update(@PathVariable Long id, @RequestBody Stock stock) {
+        stock.setId(id); // Assure la cohérence de l'ID avec l'URL
+        return service.createOrUpdate(stock);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        service.deleteById(id);
+    }
 }

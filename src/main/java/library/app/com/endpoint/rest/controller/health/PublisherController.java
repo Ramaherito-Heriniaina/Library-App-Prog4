@@ -10,8 +10,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/publishers")
 @RequiredArgsConstructor
-public class
-PublisherController {
+public class PublisherController {
 
     private final PublisherService service;
 
@@ -25,5 +24,21 @@ PublisherController {
     @GetMapping("/{id}")
     public Publisher getById(@PathVariable Long id) {
         return service.getById(id);
+    }
+
+    @PostMapping
+    public Publisher create(@RequestBody Publisher publisher) {
+        return service.createOrUpdate(publisher);
+    }
+
+    @PutMapping("/{id}")
+    public Publisher update(@PathVariable Long id, @RequestBody Publisher publisher) {
+        publisher.setId(id); // Assure la cohérence de l'ID avec l'URL
+        return service.createOrUpdate(publisher);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        service.deleteById(id);
     }
 }

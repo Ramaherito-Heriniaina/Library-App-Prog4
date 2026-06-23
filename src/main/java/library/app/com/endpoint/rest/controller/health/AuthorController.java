@@ -25,4 +25,20 @@ public class AuthorController {
     public Author getById(@PathVariable Long id) {
         return service.getById(id);
     }
+
+    @PostMapping
+    public Author create(@RequestBody Author author) {
+        return service.createOrUpdate(author);
+    }
+
+    @PutMapping("/{id}")
+    public Author update(@PathVariable Long id, @RequestBody Author author) {
+        author.setId(id);
+        return service.createOrUpdate(author);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        service.deleteById(id);
+    }
 }

@@ -25,4 +25,20 @@ public class RestockingController {
     public JRestocking getById(@PathVariable Long id) {
         return service.getById(id);
     }
+
+    @PostMapping
+    public JRestocking create(@RequestBody JRestocking restocking) {
+        return service.createOrUpdate(restocking);
+    }
+
+    @PutMapping("/{id}")
+    public JRestocking update(@PathVariable Long id, @RequestBody JRestocking restocking) {
+        restocking.setId(id); // Assure la cohérence de l'ID avec l'URL
+        return service.createOrUpdate(restocking);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        service.deleteById(id);
+    }
 }

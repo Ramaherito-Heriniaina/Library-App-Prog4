@@ -25,4 +25,20 @@ public class OrderLineController {
     public OrderLine getById(@PathVariable Long id) {
         return service.getById(id);
     }
+
+    @PostMapping
+    public OrderLine create(@RequestBody OrderLine orderLine) {
+        return service.createOrUpdate(orderLine);
+    }
+
+    @PutMapping("/{id}")
+    public OrderLine update(@PathVariable Long id, @RequestBody OrderLine orderLine) {
+        orderLine.setId(id);
+        return service.createOrUpdate(orderLine);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        service.deleteById(id);
+    }
 }

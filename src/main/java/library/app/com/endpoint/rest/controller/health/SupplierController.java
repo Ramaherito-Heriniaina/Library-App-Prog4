@@ -25,4 +25,20 @@ public class SupplierController {
     public JSupplier getById(@PathVariable Long id) {
         return service.getById(id);
     }
+
+    @PostMapping
+    public JSupplier create(@RequestBody JSupplier supplier) {
+        return service.createOrUpdate(supplier);
+    }
+
+    @PutMapping("/{id}")
+    public JSupplier update(@PathVariable Long id, @RequestBody JSupplier supplier) {
+        supplier.setId(id);
+        return service.createOrUpdate(supplier);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        service.deleteById(id);
+    }
 }

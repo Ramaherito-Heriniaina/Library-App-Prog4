@@ -25,4 +25,20 @@ public class OrderController {
     public Order getById(@PathVariable Long id) {
         return service.getById(id);
     }
+
+    @PostMapping
+    public Order create(@RequestBody Order order) {
+        return service.createOrUpdate(order);
+    }
+
+    @PutMapping("/{id}")
+    public Order update(@PathVariable Long id, @RequestBody Order order) {
+        order.setId(id);
+        return service.createOrUpdate(order);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        service.deleteById(id);
+    }
 }

@@ -25,4 +25,20 @@ public class InvoiceController {
     public JInvoice getById(@PathVariable Long id) {
         return service.getById(id);
     }
+
+    @PostMapping
+    public JInvoice create(@RequestBody JInvoice invoice) {
+        return service.createOrUpdate(invoice);
+    }
+
+    @PutMapping("/{id}")
+    public JInvoice update(@PathVariable Long id, @RequestBody JInvoice invoice) {
+        invoice.setId(id); // Assure la cohérence de l'ID avec l'URL
+        return service.createOrUpdate(invoice);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        service.deleteById(id);
+    }
 }

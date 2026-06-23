@@ -25,4 +25,20 @@ public class PromotionController {
     public JPromotion getById(@PathVariable Long id) {
         return service.getById(id);
     }
+
+    @PostMapping
+    public JPromotion create(@RequestBody JPromotion promotion) {
+        return service.createOrUpdate(promotion);
+    }
+
+    @PutMapping("/{id}")
+    public JPromotion update(@PathVariable Long id, @RequestBody JPromotion promotion) {
+        promotion.setId(id); // Assure la cohérence de l'ID
+        return service.createOrUpdate(promotion);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        service.deleteById(id);
+    }
 }

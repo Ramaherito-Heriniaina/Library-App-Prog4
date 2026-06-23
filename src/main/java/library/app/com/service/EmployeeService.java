@@ -27,4 +27,15 @@ public class EmployeeService {
                 .map(Employee::from)
                 .orElseThrow(() -> new NotFoundException("Employee #" + id + " not found"));
     }
+
+    public Employee createOrUpdate(Employee employee) {
+        return Employee.from(repository.save(employee));
+    }
+
+    public void deleteById(Long id) {
+        if (!repository.existsById(id)) {
+            throw new NotFoundException("Employee #" + id + " not found");
+        }
+        repository.deleteById(id);
+    }
 }

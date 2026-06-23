@@ -27,4 +27,15 @@ public class StockService {
                 .map(Stock::from)
                 .orElseThrow(() -> new NotFoundException("Stock #" + id + " not found"));
     }
+
+    public Stock createOrUpdate(Stock stock) {
+        return Stock.from(repository.save(stock));
+    }
+
+    public void deleteById(Long id) {
+        if (!repository.existsById(id)) {
+            throw new NotFoundException("Stock #" + id + " not found");
+        }
+        repository.deleteById(id);
+    }
 }

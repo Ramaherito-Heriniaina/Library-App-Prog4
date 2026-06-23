@@ -27,4 +27,15 @@ public class CustomerService {
                 .map(Customer::from)
                 .orElseThrow(() -> new NotFoundException("Customer #" + id + " not found"));
     }
+
+    public Customer createOrUpdate(Customer customer) {
+        return Customer.from(repository.save(customer));
+    }
+
+    public void deleteById(Long id) {
+        if (!repository.existsById(id)) {
+            throw new NotFoundException("Customer #" + id + " not found");
+        }
+        repository.deleteById(id);
+    }
 }

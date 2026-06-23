@@ -23,4 +23,15 @@ public class PaymentService {
         return repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Payment #" + id + " not found"));
     }
+
+    public JPayment createOrUpdate(JPayment payment) {
+        return repository.save(payment);
+    }
+
+    public void deleteById(Long id) {
+        if (!repository.existsById(id)) {
+            throw new NotFoundException("Payment #" + id + " not found");
+        }
+        repository.deleteById(id);
+    }
 }

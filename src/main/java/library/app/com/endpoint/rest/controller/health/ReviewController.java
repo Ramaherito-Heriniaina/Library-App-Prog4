@@ -25,4 +25,20 @@ public class ReviewController {
     public Review getById(@PathVariable Long id) {
         return service.getById(id);
     }
+
+    @PostMapping
+    public Review create(@RequestBody Review review) {
+        return service.createOrUpdate(review);
+    }
+
+    @PutMapping("/{id}")
+    public Review update(@PathVariable Long id, @RequestBody Review review) {
+        review.setId(id); // Assure la cohérence de l'ID
+        return service.createOrUpdate(review);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        service.deleteById(id);
+    }
 }

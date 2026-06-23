@@ -23,4 +23,15 @@ public class RestockingService {
         return repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Restocking #" + id + " not found"));
     }
+
+    public JRestocking createOrUpdate(JRestocking restocking) {
+        return repository.save(restocking);
+    }
+
+    public void deleteById(Long id) {
+        if (!repository.existsById(id)) {
+            throw new NotFoundException("Restocking #" + id + " not found");
+        }
+        repository.deleteById(id);
+    }
 }

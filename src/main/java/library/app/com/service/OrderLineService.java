@@ -27,4 +27,15 @@ public class OrderLineService {
                 .map(OrderLine::from)
                 .orElseThrow(() -> new NotFoundException("OrderLine #" + id + " not found"));
     }
+
+    public OrderLine createOrUpdate(OrderLine orderLine) {
+        return OrderLine.from(repository.save(orderLine));
+    }
+
+    public void deleteById(Long id) {
+        if (!repository.existsById(id)) {
+            throw new NotFoundException("OrderLine #" + id + " not found");
+        }
+        repository.deleteById(id);
+    }
 }

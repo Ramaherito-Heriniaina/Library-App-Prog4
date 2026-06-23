@@ -23,4 +23,15 @@ public class CartService {
         return repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Cart #" + id + " not found"));
     }
+
+    public JCart createOrUpdate(JCart cart) {
+        return repository.save(cart);
+    }
+
+    public void deleteById(Long id) {
+        if (!repository.existsById(id)) {
+            throw new NotFoundException("Cart #" + id + " not found");
+        }
+        repository.deleteById(id);
+    }
 }

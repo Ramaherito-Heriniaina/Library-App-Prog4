@@ -25,4 +25,20 @@ public class CartController {
     public JCart getById(@PathVariable Long id) {
         return service.getById(id);
     }
+
+    @PostMapping
+    public JCart create(@RequestBody JCart cart) {
+        return service.createOrUpdate(cart);
+    }
+
+    @PutMapping("/{id}")
+    public JCart update(@PathVariable Long id, @RequestBody JCart cart) {
+        cart.setId(id);
+        return service.createOrUpdate(cart);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        service.deleteById(id);
+    }
 }

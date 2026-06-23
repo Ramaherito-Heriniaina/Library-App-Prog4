@@ -27,4 +27,15 @@ public class PublisherService {
                 .map(Publisher::from)
                 .orElseThrow(() -> new NotFoundException("Publisher #" + id + " not found"));
     }
+
+    public Publisher createOrUpdate(Publisher publisher) {
+        return Publisher.from(repository.save(publisher));
+    }
+
+    public void deleteById(Long id) {
+        if (!repository.existsById(id)) {
+            throw new NotFoundException("Publisher #" + id + " not found");
+        }
+        repository.deleteById(id);
+    }
 }

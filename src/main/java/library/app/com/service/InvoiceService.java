@@ -23,4 +23,15 @@ public class InvoiceService {
         return repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Invoice #" + id + " not found"));
     }
+
+    public JInvoice createOrUpdate(JInvoice invoice) {
+        return repository.save(invoice);
+    }
+
+    public void deleteById(Long id) {
+        if (!repository.existsById(id)) {
+            throw new NotFoundException("Invoice #" + id + " not found");
+        }
+        repository.deleteById(id);
+    }
 }

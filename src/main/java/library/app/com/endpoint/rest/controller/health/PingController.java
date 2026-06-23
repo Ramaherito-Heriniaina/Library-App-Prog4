@@ -25,4 +25,17 @@ public class PingController {
   public String ping() {
     return "pong";
   }
+
+  @GetMapping("/ping/db")
+  public ResponseEntity<String> pingDb() {
+    try {
+      dummyRepository.findAll();
+      return OK;
+    } catch (Exception e) {
+      return KO;
+    }
+  }
+
 }
+
+

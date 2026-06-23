@@ -25,4 +25,20 @@ public class CustomerController {
     public Customer getById(@PathVariable Long id) {
         return service.getById(id);
     }
+
+    @PostMapping
+    public Customer create(@RequestBody Customer customer) {
+        return service.createOrUpdate(customer);
+    }
+
+    @PutMapping("/{id}")
+    public Customer update(@PathVariable Long id, @RequestBody Customer customer) {
+        customer.setId(id);
+        return service.createOrUpdate(customer);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        service.deleteById(id);
+    }
 }

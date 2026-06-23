@@ -1,5 +1,6 @@
 package library.app.com.service;
 
+import jakarta.persistence.Entity;
 import library.app.com.entity.Category;
 import library.app.com.exception.NotFoundException;
 import library.app.com.repository.CategoryRepository;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+
 public class CategoryService {
 
     private final CategoryRepository repository;
@@ -26,5 +28,16 @@ public class CategoryService {
         return repository.findById(id)
                 .map(Category::from)
                 .orElseThrow(() -> new NotFoundException("Category #" + id + " not found"));
+    }
+
+    public Category createOrUpdate(Category category) {
+        return repository.save(category);
+    }
+
+    public void deleteById(Long id) {
+        if (!repository.existsById(id)) {
+            throw new NotFoundException("Category #" + id + " not found");
+        }
+        repository.deleteById(id);
     }
 }

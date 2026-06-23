@@ -25,4 +25,20 @@ public class PaymentController {
     public JPayment getById(@PathVariable Long id) {
         return service.getById(id);
     }
+
+    @PostMapping
+    public JPayment create(@RequestBody JPayment payment) {
+        return service.createOrUpdate(payment);
+    }
+
+    @PutMapping("/{id}")
+    public JPayment update(@PathVariable Long id, @RequestBody JPayment payment) {
+        payment.setId(id);
+        return service.createOrUpdate(payment);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        service.deleteById(id);
+    }
 }

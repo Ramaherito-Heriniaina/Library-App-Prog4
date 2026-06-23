@@ -27,4 +27,15 @@ public class ReviewService {
                 .map(Review::from)
                 .orElseThrow(() -> new NotFoundException("Review #" + id + " not found"));
     }
+
+    public Review createOrUpdate(Review review) {
+        return Review.from(repository.save(review));
+    }
+
+    public void deleteById(Long id) {
+        if (!repository.existsById(id)) {
+            throw new NotFoundException("Review #" + id + " not found");
+        }
+        repository.deleteById(id);
+    }
 }

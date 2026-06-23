@@ -23,4 +23,15 @@ public class SupplierService {
         return repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Supplier #" + id + " not found"));
     }
+
+    public JSupplier createOrUpdate(JSupplier supplier) {
+        return repository.save(supplier);
+    }
+
+    public void deleteById(Long id) {
+        if (!repository.existsById(id)) {
+            throw new NotFoundException("Supplier #" + id + " not found");
+        }
+        repository.deleteById(id);
+    }
 }

@@ -23,4 +23,15 @@ public class PromotionService {
         return repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Promotion #" + id + " not found"));
     }
+
+    public JPromotion createOrUpdate(JPromotion promotion) {
+        return repository.save(promotion);
+    }
+
+    public void deleteById(Long id) {
+        if (!repository.existsById(id)) {
+            throw new NotFoundException("Promotion #" + id + " not found");
+        }
+        repository.deleteById(id);
+    }
 }
