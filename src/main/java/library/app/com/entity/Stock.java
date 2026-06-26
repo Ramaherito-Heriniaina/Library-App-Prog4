@@ -8,21 +8,27 @@ import java.time.LocalDateTime;
 public class Stock {
 
     private Long id;
-    private Integer quantity;
+    private Integer quantity;          // TOUJOURS calculée (IN - OUT), jamais stockée
     private Integer alertThreshold;
     private String location;
     private LocalDateTime lastUpdated;
     private Long bookId;
 
-    public static Stock from(JStock j) {
+    /**
+     * Construit un Stock à partir de l'entité JStock + la quantité déjà calculée
+     * (somme des mouvements IN - OUT), fournie par le service.
+     * Il n'existe volontairement aucun constructeur/builder qui accepte
+     * une quantity arbitraire sans passer par ce calcul.
+     */
+    public static Stock from(JStock j, int computedQuantity) {
         if (j == null) return null;
         return Stock.builder()
-            .id(j.getId())
-            .quantity(j.getQuantity())
-            .alertThreshold(j.getAlertThreshold())
-            .location(j.getLocation())
-            .lastUpdated(j.getLastUpdated())
-            .bookId(j.getBook() != null ? j.getBook().getId() : null)
-            .build();
+                .id(j.getId())
+                .quantity(computedQuantity)
+                .alertThreshold(j.getAlertThreshold())
+                .location(j.getLocation())
+                .lastUpdated(j.getLastUpdated())
+                .bookId(j.getBook() != null ? j.getBook().getId() : null)
+                .build();
     }
 }

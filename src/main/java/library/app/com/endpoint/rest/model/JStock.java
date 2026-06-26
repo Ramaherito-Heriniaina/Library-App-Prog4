@@ -13,7 +13,7 @@ public class JStock {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer quantity;
+
     private Integer alertThreshold;
     private String location;
     private LocalDateTime lastUpdated;
