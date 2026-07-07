@@ -17,5 +17,5 @@ public class BookCopy {
 
     @ManyToOne
     @JoinColumn(name = "book_id")
-    private JBook book;  // ← JBook au lieu de Book
+    private JBook book;
 }

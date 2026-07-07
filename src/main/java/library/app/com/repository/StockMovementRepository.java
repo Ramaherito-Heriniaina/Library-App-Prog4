@@ -13,11 +13,6 @@ public interface StockMovementRepository extends JpaRepository<JStockMovement, L
 
     List<JStockMovement> findByBookId(Long bookId);
 
-    /**
-     * Calcule la quantité en stock pour un livre :
-     * somme des IN moins somme des OUT.
-     * COALESCE garantit 0 si aucun mouvement n'existe (au lieu de null).
-     */
     @Query("""
         SELECT COALESCE(SUM(
             CASE WHEN m.type = 'IN' THEN m.quantity
@@ -28,4 +23,22 @@ public interface StockMovementRepository extends JpaRepository<JStockMovement, L
         WHERE m.book.id = :bookId
         """)
     Integer computeStockQuantity(@Param("bookId") Long bookId);
+
+    /**
+     * Quantité pour un livre + une édition spécifique (format GF ou PF)
+     * = SUM(IN) - SUM(OUT) filtrés sur le format de la BookCopy
+     */
+    @Query("""
+        SELECT COALESCE(SUM(
+            CASE WHEN m.type = 'IN' THEN m.quantity
+                 WHEN m.type = 'OUT' THEN -m.quantity
+                 ELSE 0 END
+        ), 0)
+        FROM JStockMovement m
+        WHERE m.book.id = :bookId
+        AND m.format = :format
+        """)
+    Integer computeStockQuantityByFormat(
+            @Param("bookId") Long bookId,
+            @Param("format") String format);
 }

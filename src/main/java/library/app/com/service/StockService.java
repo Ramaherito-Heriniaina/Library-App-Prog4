@@ -1,6 +1,7 @@
 package library.app.com.service;
 
 import library.app.com.endpoint.rest.model.JStock;
+import library.app.com.entity.LowStockResult;
 import library.app.com.entity.Stock;
 import library.app.com.exception.NotFoundException;
 import library.app.com.repository.StockMovementRepository;
@@ -18,6 +19,9 @@ public class StockService {
     private final StockRepository repository;
     private final StockMovementRepository stockMovementRepository;
 
+    private static final int DEFAULT_LOW_STOCK_THRESHOLD = 3;
+
+    // ===== READ de base =====
 
     public List<Stock> getAll(int page, int pageSize) {
         return repository.findAll(PageRequest.of(page, pageSize))
@@ -32,23 +36,58 @@ public class StockService {
         return toStockWithComputedQuantity(stock);
     }
 
-    /**
-     * Stock d'un livre précis (par bookId), quantité calculée à la volée
-     * depuis StockMovement (IN - OUT).
-     */
+    // ===== Fonctionnalité 1a : stock d'un livre, toutes éditions confondues =====
+
     public Stock getStockByBookId(Long bookId) {
         JStock stock = repository.findByBookId(bookId)
                 .orElseThrow(() -> new NotFoundException("Stock for Book #" + bookId + " not found"));
         return toStockWithComputedQuantity(stock);
     }
 
-    /**
-     * Stock de tous les livres, quantité calculée à la volée pour chacun.
-     */
     public List<Stock> getAllStocks() {
         return repository.findAll()
                 .stream()
                 .map(this::toStockWithComputedQuantity)
+                .toList();
+    }
+
+    // ===== Fonctionnalité 1b : stock d'une édition spécifique (par format) =====
+
+    public Stock getStockByBookIdAndFormat(Long bookId, String format) {
+        JStock stock = repository.findByBookId(bookId)
+                .orElseThrow(() -> new NotFoundException("Stock for Book #" + bookId + " not found"));
+
+        int computedQuantity = stockMovementRepository
+                .computeStockQuantityByFormat(bookId, format);
+
+        return Stock.from(stock, computedQuantity);
+    }
+
+    // ===== Fonctionnalité 2 : produits avec stock bas =====
+
+    /**
+     * Retourne les livres dont le stock calculé est <= threshold.
+     * Par défaut threshold = 3.
+     */
+    public List<LowStockResult> getLowStockBooks(int threshold) {
+        return repository.findAll()
+                .stream()
+                .map(stock -> {
+                    Long bookId = stock.getBook() != null ? stock.getBook().getId() : null;
+                    int quantity = bookId != null
+                            ? stockMovementRepository.computeStockQuantity(bookId)
+                            : 0;
+
+                    return LowStockResult.builder()
+                            .bookId(bookId)
+                            .title(stock.getBook() != null ? stock.getBook().getTitle() : null)
+                            .isbn(stock.getBook() != null ? stock.getBook().getIsbn() : null)
+                            .currentStock(quantity)
+                            .alertThreshold(stock.getAlertThreshold())
+                            .location(stock.getLocation())
+                            .build();
+                })
+                .filter(result -> result.getCurrentStock() <= threshold)
                 .toList();
     }
 
@@ -61,8 +100,4 @@ public class StockService {
                 : 0;
         return Stock.from(stock, computedQuantity);
     }
-
-    // Aucune méthode create/update n'existe ici volontairement :
-    // la quantité ne peut JAMAIS être écrite directement,
-    // elle ne change qu'en ajoutant un JStockMovement (IN ou OUT).
 }

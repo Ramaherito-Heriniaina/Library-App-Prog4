@@ -22,9 +22,14 @@ public class JStockMovement {
     @Column(nullable = false)
     private Integer quantity;
 
-    private LocalDate movementDate;
+    /**
+     * Format de l'édition concernée : "GF", "PF", etc.
+     * Nullable : null = mouvement toutes éditions confondues.
+     */
+    private String format;
 
-    private String note; // ex: "Livraison fournisseur X", "Vente commande #42"
+    private LocalDate movementDate;
+    private String note;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id")

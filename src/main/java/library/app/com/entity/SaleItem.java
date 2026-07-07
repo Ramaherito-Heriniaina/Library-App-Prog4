@@ -10,9 +10,9 @@ import java.math.BigDecimal;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class SaleItem {
 
-    @Id
+    @Id  // ← déplacé ici
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id;  // ← type Long, pas Integer
 
     private Integer quantity;
     private BigDecimal unitPrice;
