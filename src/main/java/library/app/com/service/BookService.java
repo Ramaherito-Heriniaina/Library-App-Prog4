@@ -15,8 +15,14 @@ import java.util.List;
 public class BookService {
 
     private final BookRepository repository;
-    private final BookRepository bookRepository;
 
+
+    public Book create(JBook book) {
+
+        return Book.from(
+                repository.save(book)
+        );
+    }
     public List<Book> getAll(int page, int pageSize) {
         return repository.findAll(PageRequest.of(page, pageSize))
                 .stream()
