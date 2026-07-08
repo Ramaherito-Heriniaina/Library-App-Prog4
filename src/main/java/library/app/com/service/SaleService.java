@@ -3,6 +3,7 @@ package library.app.com.service;
 import library.app.com.endpoint.rest.model.JSale;
 import library.app.com.endpoint.rest.model.JSaleItem;
 import library.app.com.repository.SaleRepository;
+import library.app.com.repository.projection.RevenueByCategory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -58,7 +59,6 @@ public class SaleService {
 
 
 
-    // Trouver une vente par ID
     public JSale getSaleById(Long id){
 
         return saleRepository.findById(id)
@@ -69,12 +69,14 @@ public class SaleService {
                 );
     }
 
-
-
-    // Supprimer une vente
     public void deleteSale(Long id){
 
         saleRepository.deleteById(id);
+
+    }
+    public List<RevenueByCategory> getRevenueByCategory() {
+
+        return saleRepository.getRevenueByCategory();
 
     }
 

@@ -2,6 +2,7 @@ package library.app.com.endpoint.rest.controller.health;
 
 
 import library.app.com.endpoint.rest.model.JSale;
+import library.app.com.repository.projection.RevenueByCategory;
 import library.app.com.service.SaleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -39,8 +40,13 @@ public class SaleController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteSale(
             @PathVariable Long id
+
     ) {
 
         saleService.deleteSale(id);
+    }
+    @GetMapping("/revenue-by-category")
+    public List<RevenueByCategory> getRevenueByCategory() {
+        return saleService.getRevenueByCategory();
     }
 }
