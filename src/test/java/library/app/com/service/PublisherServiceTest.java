@@ -1,9 +1,10 @@
 package library.app.com.service;
 
-import library.app.com.endpoint.rest.model.JAuthor;
-import library.app.com.entity.Author;
+
+import library.app.com.endpoint.rest.model.JPublisher;
+import library.app.com.entity.Publisher;
 import library.app.com.exception.NotFoundException;
-import library.app.com.repository.AuthorRepository;
+import library.app.com.repository.PublisherRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,36 +22,33 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class AuthorServiceTest {
+class PublisherServiceTest {
 
     @Mock
-    private AuthorRepository repository;
+    private PublisherRepository repository;
 
     @InjectMocks
-    private AuthorService authorService;
+    private PublisherService publisherService;
 
     @Test
     void getAll_ShouldReturnList() {
-        // Création d'un JAuthor
-        JAuthor jAuthor = new JAuthor();
-        Page<JAuthor> page = new PageImpl<>(List.of(jAuthor));
-
-        // Stubbing avec doReturn
+        JPublisher jPublisher = new JPublisher();
+        Page<JPublisher> page = new PageImpl<>(List.of(jPublisher));
         doReturn(page).when(repository).findAll(any(Pageable.class));
 
-        List<Author> result = authorService.getAll(0, 10);
+        List<Publisher> result = publisherService.getAll(0, 10);
 
         assertEquals(1, result.size());
         verify(repository).findAll(any(Pageable.class));
     }
 
     @Test
-    void getById_ShouldReturnAuthor_WhenExists() {
+    void getById_ShouldReturnPublisher_WhenExists() {
         Long id = 1L;
-        JAuthor jAuthor = new JAuthor();
-        doReturn(Optional.of(jAuthor)).when(repository).findById(id);
+        JPublisher jPublisher = new JPublisher();
+        doReturn(Optional.of(jPublisher)).when(repository).findById(id);
 
-        Author result = authorService.getById(id);
+        Publisher result = publisherService.getById(id);
 
         assertNotNull(result);
     }
@@ -60,6 +58,6 @@ class AuthorServiceTest {
         Long id = 1L;
         doReturn(Optional.empty()).when(repository).findById(id);
 
-        assertThrows(NotFoundException.class, () -> authorService.getById(id));
+        assertThrows(NotFoundException.class, () -> publisherService.getById(id));
     }
 }

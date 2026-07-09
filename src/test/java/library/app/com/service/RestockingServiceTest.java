@@ -1,9 +1,9 @@
 package library.app.com.service;
 
-import library.app.com.endpoint.rest.model.JAuthor;
-import library.app.com.entity.Author;
+
+import library.app.com.endpoint.rest.model.JRestocking;
 import library.app.com.exception.NotFoundException;
-import library.app.com.repository.AuthorRepository;
+import library.app.com.repository.RestockingRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,36 +21,33 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class AuthorServiceTest {
+class RestockingServiceTest {
 
     @Mock
-    private AuthorRepository repository;
+    private RestockingRepository repository;
 
     @InjectMocks
-    private AuthorService authorService;
+    private RestockingService restockingService;
 
     @Test
     void getAll_ShouldReturnList() {
-        // Création d'un JAuthor
-        JAuthor jAuthor = new JAuthor();
-        Page<JAuthor> page = new PageImpl<>(List.of(jAuthor));
-
-        // Stubbing avec doReturn
+        JRestocking jRestocking = new JRestocking();
+        Page<JRestocking> page = new PageImpl<>(List.of(jRestocking));
         doReturn(page).when(repository).findAll(any(Pageable.class));
 
-        List<Author> result = authorService.getAll(0, 10);
+        List<JRestocking> result = restockingService.getAll(0, 10);
 
         assertEquals(1, result.size());
         verify(repository).findAll(any(Pageable.class));
     }
 
     @Test
-    void getById_ShouldReturnAuthor_WhenExists() {
+    void getById_ShouldReturnJRestocking_WhenExists() {
         Long id = 1L;
-        JAuthor jAuthor = new JAuthor();
-        doReturn(Optional.of(jAuthor)).when(repository).findById(id);
+        JRestocking jRestocking = new JRestocking();
+        doReturn(Optional.of(jRestocking)).when(repository).findById(id);
 
-        Author result = authorService.getById(id);
+        JRestocking result = restockingService.getById(id);
 
         assertNotNull(result);
     }
@@ -60,6 +57,6 @@ class AuthorServiceTest {
         Long id = 1L;
         doReturn(Optional.empty()).when(repository).findById(id);
 
-        assertThrows(NotFoundException.class, () -> authorService.getById(id));
+        assertThrows(NotFoundException.class, () -> restockingService.getById(id));
     }
 }

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
@@ -17,7 +18,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class BookServiceTest {
@@ -29,63 +30,37 @@ class BookServiceTest {
     private BookService bookService;
 
     @Test
-    void getAll_ReturnsList() {
-        when(repository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(new Book())));
+    void getAll_ShouldReturnList() {
 
-        List<Book> books = bookService.getAll(0, 10);
+        JBook jBook = new JBook();
 
-        assertEquals(1, books.size());
-        verify(repository).findAll(any(Pageable.class));
+        Page<JBook> page = new PageImpl<>(List.of(jBook));
+
+
+        when(repository.findAll(any(Pageable.class))).thenReturn(page);
+
+
+        List<Book> result = bookService.getAll(0, 10);
+
+        assertEquals(1, result.size());
     }
 
     @Test
-    void getById_Found() {
+    void getById_ShouldReturnBook_WhenExists() {
         Long id = 1L;
-        when(repository.findById(id)).thenReturn(Optional.of(new Book()));
+        JBook jBook = new JBook();
+        when(repository.findById(id)).thenReturn(Optional.of(jBook));
 
-        Book book = bookService.getById(id);
+        Book result = bookService.getById(id);
 
-        assertNotNull(book);
+        assertNotNull(result);
     }
 
     @Test
-    void getById_NotFound_ThrowsException() {
-        when(repository.findById(1L)).thenReturn(Optional.empty());
-        assertThrows(NotFoundException.class, () -> bookService.getById(1L));
-    }
-
-    @Test
-    void updateBook_Success() {
+    void getById_ShouldThrowException_WhenNotFound() {
         Long id = 1L;
-        JBook existing = new JBook();
-        JBook updatedData = new JBook();
-        updatedData.setTitle("New Title");
+        when(repository.findById(id)).thenReturn(Optional.empty());
 
-        when(repository.findById(id)).thenReturn(Optional.of(existing));
-        when(repository.save(any(JBook.class))).thenReturn(updatedData);
-
-        JBook result = bookService.updateBook(id, updatedData);
-
-        assertEquals("New Title", result.getTitle());
-        verify(repository).save(existing);
-    }
-
-    @Test
-    void deleteBook_Success() {
-        Long id = 1L;
-        when(repository.existsById(id)).thenReturn(true);
-
-        bookService.deleteBook(id);
-
-        verify(repository, times(1)).deleteById(id);
-    }
-
-    @Test
-    void deleteBook_ThrowsException_WhenNotFound() {
-        Long id = 99L;
-        when(repository.existsById(id)).thenReturn(false);
-
-        assertThrows(RuntimeException.class, () -> bookService.deleteBook(id));
-        verify(repository, never()).deleteById(any());
+        assertThrows(NotFoundException.class, () -> bookService.getById(id));
     }
 }

@@ -1,5 +1,6 @@
 package library.app.com.service;
 
+import library.app.com.endpoint.rest.model.JCategory;
 import library.app.com.entity.Category;
 import library.app.com.exception.NotFoundException;
 import library.app.com.repository.CategoryRepository;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
@@ -29,10 +31,10 @@ class CategoryServiceTest {
 
     @Test
     void getAll_ReturnsList() {
-
-        Category category = new Category();
-
-        when(repository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(category)));
+        // Créer un JCategory (entité JPA) au lieu de Category
+        JCategory jCategory = new JCategory();
+        Page<JCategory> page = new PageImpl<>(List.of(jCategory));
+        when(repository.findAll(any(Pageable.class))).thenReturn(page);
 
         List<Category> result = categoryService.getAll(0, 10);
 
@@ -42,10 +44,9 @@ class CategoryServiceTest {
 
     @Test
     void getById_ReturnsCategory_WhenExists() {
-
         Long id = 1L;
-        Category category = new Category();
-        when(repository.findById(id)).thenReturn(Optional.of(category));
+        JCategory jCategory = new JCategory();
+        when(repository.findById(id)).thenReturn(Optional.of(jCategory));
 
         Category result = categoryService.getById(id);
 
@@ -54,7 +55,6 @@ class CategoryServiceTest {
 
     @Test
     void getById_ThrowsNotFoundException_WhenDoesNotExist() {
-
         Long id = 1L;
         when(repository.findById(id)).thenReturn(Optional.empty());
 

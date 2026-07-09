@@ -1,7 +1,7 @@
 package library.app.com.endpoint;
 
-import library.app.com.endpoint.rest.controller.health.BookController;
-import library.app.com.service.BookService;
+import library.app.com.endpoint.rest.controller.health.PublisherController;
+import library.app.com.service.PublisherService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -12,18 +12,18 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(BookController.class)
-public class BookControllerTest {
+@WebMvcTest(PublisherController.class)
+public class PublisherControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private BookService bookService;
+    private PublisherService publisherService;
 
     @Test
-    void should_get_all_books() throws Exception {
-        mockMvc.perform(get("/books")
+    void should_get_all_publishers() throws Exception {
+        mockMvc.perform(get("/publishers")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
