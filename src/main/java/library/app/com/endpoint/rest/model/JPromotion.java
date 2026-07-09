@@ -1,40 +1,47 @@
 package library.app.com.endpoint.rest.model;
 
 import jakarta.persistence.*;
-import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import lombok.*;
 
 @Entity
 @Table(name = "promotion")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class JPromotion {
 
-    public enum DiscountType { PERCENTAGE, FIXED_AMOUNT }
+  public enum DiscountType {
+    PERCENTAGE,
+    FIXED_AMOUNT
+  }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(unique = true, nullable = false)
-    private String code;
+  @Column(unique = true, nullable = false)
+  private String code;
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
+  @Column(columnDefinition = "TEXT")
+  private String description;
 
-    private LocalDate startDate;
-    private LocalDate endDate;
+  private LocalDate startDate;
+  private LocalDate endDate;
 
-    @Enumerated(EnumType.STRING)
-    private DiscountType discountType;
+  @Enumerated(EnumType.STRING)
+  private DiscountType discountType;
 
-    @Column(precision = 10, scale = 2)
-    private BigDecimal discountValue;
+  @Column(precision = 10, scale = 2)
+  private BigDecimal discountValue;
 
-    private Integer maxUses;
-    private Integer currentUses;
+  private Integer maxUses;
+  private Integer currentUses;
 
-    @OneToMany(mappedBy = "promotion", cascade = CascadeType.ALL)
-    private List<JPromotionBook> promotionBooks;
+  @OneToMany(mappedBy = "promotion", cascade = CascadeType.ALL)
+  private List<JPromotionBook> promotionBooks;
 }
