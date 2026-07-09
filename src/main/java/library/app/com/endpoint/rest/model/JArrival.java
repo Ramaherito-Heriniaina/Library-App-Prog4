@@ -2,23 +2,22 @@ package library.app.com.endpoint.rest.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
-@Table(name = "stock")
+@Table(name = "arrival")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-public class JStock {
+public class JArrival {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Integer quantity;
+    private LocalDate arrivalDate;
+    private String note; // ex: "Livraison fournisseur X", "Réassort"
 
-    private Integer alertThreshold;
-    private String location;
-    private LocalDateTime lastUpdated;
-
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id")
     private JBook book;
 }
