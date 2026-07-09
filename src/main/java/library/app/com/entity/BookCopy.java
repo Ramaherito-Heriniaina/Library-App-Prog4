@@ -1,21 +1,25 @@
 package library.app.com.entity;
 
-import library.app.com.endpoint.rest.model.JBook;
 import jakarta.persistence.*;
+import library.app.com.endpoint.rest.model.JBook;
 import lombok.*;
 
 @Entity
 @Table(name = "book_copy")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class BookCopy {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    private String format;
+  private String format;
 
-    @ManyToOne
-    @JoinColumn(name = "book_id")
-    private JBook book;
+  @ManyToOne
+  @JoinColumn(name = "book_id")
+  private JBook book;
 }

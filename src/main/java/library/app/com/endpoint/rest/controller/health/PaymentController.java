@@ -1,28 +1,26 @@
 package library.app.com.endpoint.rest.controller.health;
 
+import java.util.List;
 import library.app.com.endpoint.rest.model.JPayment;
 import library.app.com.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/payments")
 @RequiredArgsConstructor
 public class PaymentController {
 
-    private final PaymentService service;
+  private final PaymentService service;
 
-    @GetMapping
-    public List<JPayment> getAll(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int pageSize) {
-        return service.getAll(page, pageSize);
-    }
+  @GetMapping
+  public List<JPayment> getAll(
+      @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int pageSize) {
+    return service.getAll(page, pageSize);
+  }
 
-    @GetMapping("/{id}")
-    public JPayment getById(@PathVariable Long id) {
-        return service.getById(id);
-    }
+  @GetMapping("/{id}")
+  public JPayment getById(@PathVariable Long id) {
+    return service.getById(id);
+  }
 }
