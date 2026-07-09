@@ -31,7 +31,6 @@ class CategoryServiceTest {
 
     @Test
     void getAll_ReturnsList() {
-        // Créer un JCategory (entité JPA) au lieu de Category
         JCategory jCategory = new JCategory();
         Page<JCategory> page = new PageImpl<>(List.of(jCategory));
         when(repository.findAll(any(Pageable.class))).thenReturn(page);
