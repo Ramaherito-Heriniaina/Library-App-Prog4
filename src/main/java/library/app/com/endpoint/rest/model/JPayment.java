@@ -1,39 +1,55 @@
 package library.app.com.endpoint.rest.model;
 
 import jakarta.persistence.*;
-import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import lombok.*;
 
 @Entity
 @Table(name = "payment")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class JPayment {
 
-    public enum Method { CARD, BANK_TRANSFER, CASH, CHECK, PAYPAL }
-    public enum Status { PENDING, VALIDATED, REJECTED, REFUNDED }
+  public enum Method {
+    CARD,
+    BANK_TRANSFER,
+    CASH,
+    CHECK,
+    PAYPAL
+  }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  public enum Status {
+    PENDING,
+    VALIDATED,
+    REJECTED,
+    REFUNDED
+  }
 
-    @Column(precision = 10, scale = 2)
-    private BigDecimal amount;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Enumerated(EnumType.STRING)
-    private Method method;
+  @Column(precision = 10, scale = 2)
+  private BigDecimal amount;
 
-    private LocalDate paymentDate;
+  @Enumerated(EnumType.STRING)
+  private Method method;
 
-    @Enumerated(EnumType.STRING)
-    private Status status;
+  private LocalDate paymentDate;
 
-    private String reference;
+  @Enumerated(EnumType.STRING)
+  private Status status;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id")
-    private JOrder order;
+  private String reference;
 
-    @OneToOne(mappedBy = "payment", cascade = CascadeType.ALL)
-    private JInvoice invoice;
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "order_id")
+  private JOrder order;
+
+  @OneToOne(mappedBy = "payment", cascade = CascadeType.ALL)
+  private JInvoice invoice;
 }
