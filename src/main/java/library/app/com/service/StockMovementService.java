@@ -1,5 +1,6 @@
 package library.app.com.service;
 
+import java.util.List;
 import library.app.com.endpoint.rest.model.JBook;
 import library.app.com.endpoint.rest.model.JStockMovement;
 import library.app.com.entity.StockMovement;
@@ -10,52 +11,51 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class StockMovementService {
 
-    private final StockMovementRepository repository;
-    private final BookRepository bookRepository;
+  private final StockMovementRepository repository;
+  private final BookRepository bookRepository;
 
-    // ===== READ =====
+  // ===== READ =====
 
-    public List<StockMovement> getAll(int page, int pageSize) {
-        return repository.findAll(PageRequest.of(page, pageSize))
-                .stream()
-                .map(StockMovement::from)
-                .toList();
-    }
+  public List<StockMovement> getAll(int page, int pageSize) {
+    return repository.findAll(PageRequest.of(page, pageSize)).stream()
+        .map(StockMovement::from)
+        .toList();
+  }
 
-    public StockMovement getById(Long id) {
-        return repository.findById(id)
-                .map(StockMovement::from)
-                .orElseThrow(() -> new NotFoundException("StockMovement #" + id + " not found"));
-    }
+  public StockMovement getById(Long id) {
+    return repository
+        .findById(id)
+        .map(StockMovement::from)
+        .orElseThrow(() -> new NotFoundException("StockMovement #" + id + " not found"));
+  }
 
-    public List<StockMovement> getByBookId(Long bookId) {
-        return repository.findByBookId(bookId)
-                .stream()
-                .map(StockMovement::from)
-                .toList();
-    }
+  public List<StockMovement> getByBookId(Long bookId) {
+    return repository.findByBookId(bookId).stream().map(StockMovement::from).toList();
+  }
 
-    // ===== CREATE =====
+  // ===== CREATE =====
 
-    public StockMovement create(StockMovement movement) {
-        JBook book = bookRepository.findById(movement.getBookId())
-                .orElseThrow(() -> new NotFoundException("Book #" + movement.getBookId() + " not found"));
+  public StockMovement create(StockMovement movement) {
+    JBook book =
+        bookRepository
+            .findById(movement.getBookId())
+            .orElseThrow(
+                () -> new NotFoundException("Book #" + movement.getBookId() + " not found"));
 
-        JStockMovement entity = JStockMovement.builder()
-                .type(movement.getType())
-                .quantity(movement.getQuantity())
-                .format(movement.getFormat())
-                .movementDate(movement.getMovementDate())
-                .note(movement.getNote())
-                .book(book)
-                .build();
+    JStockMovement entity =
+        JStockMovement.builder()
+            .type(movement.getType())
+            .quantity(movement.getQuantity())
+            .format(movement.getFormat())
+            .movementDate(movement.getMovementDate())
+            .note(movement.getNote())
+            .book(book)
+            .build();
 
-        return StockMovement.from(repository.save(entity));
-    }
+    return StockMovement.from(repository.save(entity));
+  }
 }
