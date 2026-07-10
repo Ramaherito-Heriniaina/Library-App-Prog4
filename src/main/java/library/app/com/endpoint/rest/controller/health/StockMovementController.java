@@ -3,6 +3,7 @@ package library.app.com.endpoint.rest.controller.health;
 import library.app.com.entity.StockMovement;
 import library.app.com.service.StockMovementService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +14,8 @@ import java.util.List;
 public class StockMovementController {
 
     private final StockMovementService service;
+
+    // ===== READ =====
 
     @GetMapping
     public List<StockMovement> getAll(
@@ -29,5 +32,13 @@ public class StockMovementController {
     @GetMapping("/by-book/{bookId}")
     public List<StockMovement> getByBookId(@PathVariable Long bookId) {
         return service.getByBookId(bookId);
+    }
+
+    // ===== CREATE =====
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public StockMovement create(@RequestBody StockMovement movement) {
+        return service.create(movement);
     }
 }

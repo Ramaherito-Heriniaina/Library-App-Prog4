@@ -5,6 +5,7 @@ import library.app.com.entity.LowStockResult;
 import library.app.com.entity.Stock;
 import library.app.com.service.StockService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +16,8 @@ import java.util.List;
 public class StockController {
 
     private final StockService service;
+
+    // ===== READ =====
 
     @GetMapping
     public List<Stock> getAll(
@@ -49,5 +52,20 @@ public class StockController {
     public List<LowStockResult> getLowStockBooks(
             @RequestParam(defaultValue = "3") int threshold) {
         return service.getLowStockBooks(threshold);
+    }
+
+    // ===== CREATE =====
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Stock create(@RequestBody Stock stock) {
+        return service.create(stock);
+    }
+
+    // ===== UPDATE (location + alertThreshold uniquement, jamais quantity) =====
+
+    @PutMapping("/{id}")
+    public Stock update(@PathVariable Long id, @RequestBody Stock stock) {
+        return service.update(id, stock);
     }
 }

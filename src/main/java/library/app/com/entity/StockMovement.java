@@ -10,6 +10,7 @@ public class StockMovement {
     private Long id;
     private JStockMovement.Type type;
     private Integer quantity;
+    private String format;          // ← manquait
     private LocalDate movementDate;
     private String note;
     private Long bookId;
@@ -20,6 +21,7 @@ public class StockMovement {
                 .id(j.getId())
                 .type(j.getType())
                 .quantity(j.getQuantity())
+                .format(j.getFormat())  // ← manquait
                 .movementDate(j.getMovementDate())
                 .note(j.getNote())
                 .bookId(j.getBook() != null ? j.getBook().getId() : null)

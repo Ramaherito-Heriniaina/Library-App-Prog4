@@ -1,15 +1,18 @@
 package library.app.com.service;
 
+import library.app.com.endpoint.rest.model.JBook;
 import library.app.com.endpoint.rest.model.JStock;
 import library.app.com.entity.LowStockResult;
 import library.app.com.entity.Stock;
 import library.app.com.exception.NotFoundException;
+import library.app.com.repository.BookRepository;
 import library.app.com.repository.StockMovementRepository;
 import library.app.com.repository.StockRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -18,10 +21,9 @@ public class StockService {
 
     private final StockRepository repository;
     private final StockMovementRepository stockMovementRepository;
+    private final BookRepository bookRepository;
 
-    private static final int DEFAULT_LOW_STOCK_THRESHOLD = 3;
-
-    // ===== READ de base =====
+    // ===== READ =====
 
     public List<Stock> getAll(int page, int pageSize) {
         return repository.findAll(PageRequest.of(page, pageSize))
@@ -36,8 +38,6 @@ public class StockService {
         return toStockWithComputedQuantity(stock);
     }
 
-    // ===== Fonctionnalité 1a : stock d'un livre, toutes éditions confondues =====
-
     public Stock getStockByBookId(Long bookId) {
         JStock stock = repository.findByBookId(bookId)
                 .orElseThrow(() -> new NotFoundException("Stock for Book #" + bookId + " not found"));
@@ -51,24 +51,14 @@ public class StockService {
                 .toList();
     }
 
-    // ===== Fonctionnalité 1b : stock d'une édition spécifique (par format) =====
-
     public Stock getStockByBookIdAndFormat(Long bookId, String format) {
         JStock stock = repository.findByBookId(bookId)
                 .orElseThrow(() -> new NotFoundException("Stock for Book #" + bookId + " not found"));
-
         int computedQuantity = stockMovementRepository
                 .computeStockQuantityByFormat(bookId, format);
-
         return Stock.from(stock, computedQuantity);
     }
 
-    // ===== Fonctionnalité 2 : produits avec stock bas =====
-
-    /**
-     * Retourne les livres dont le stock calculé est <= threshold.
-     * Par défaut threshold = 3.
-     */
     public List<LowStockResult> getLowStockBooks(int threshold) {
         return repository.findAll()
                 .stream()
@@ -77,7 +67,6 @@ public class StockService {
                     int quantity = bookId != null
                             ? stockMovementRepository.computeStockQuantity(bookId)
                             : 0;
-
                     return LowStockResult.builder()
                             .bookId(bookId)
                             .title(stock.getBook() != null ? stock.getBook().getTitle() : null)
@@ -91,7 +80,45 @@ public class StockService {
                 .toList();
     }
 
-    // ===== Helper interne =====
+    // ===== CREATE =====
+
+    public Stock create(Stock stock) {
+        JBook book = bookRepository.findById(stock.getBookId())
+                .orElseThrow(() -> new NotFoundException("Book #" + stock.getBookId() + " not found"));
+
+        // Vérifie qu'un stock n'existe pas déjà pour ce livre
+        repository.findByBookId(stock.getBookId()).ifPresent(existing -> {
+            throw new IllegalStateException("Stock already exists for Book #" + stock.getBookId());
+        });
+
+        JStock entity = JStock.builder()
+                .alertThreshold(stock.getAlertThreshold())
+                .location(stock.getLocation())
+                .lastUpdated(LocalDateTime.now())
+                .book(book)
+                .build();
+
+        return toStockWithComputedQuantity(repository.save(entity));
+    }
+
+    // ===== UPDATE (location et alertThreshold uniquement, jamais la quantity) =====
+
+    public Stock update(Long id, Stock stock) {
+        JStock entity = repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Stock #" + id + " not found"));
+
+        if (stock.getLocation() != null) {
+            entity.setLocation(stock.getLocation());
+        }
+        if (stock.getAlertThreshold() != null) {
+            entity.setAlertThreshold(stock.getAlertThreshold());
+        }
+        entity.setLastUpdated(LocalDateTime.now());
+
+        return toStockWithComputedQuantity(repository.save(entity));
+    }
+
+    // ===== Helper =====
 
     private Stock toStockWithComputedQuantity(JStock stock) {
         Long bookId = stock.getBook() != null ? stock.getBook().getId() : null;

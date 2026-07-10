@@ -1,7 +1,10 @@
 package library.app.com.service;
 
+import library.app.com.endpoint.rest.model.JBook;
+import library.app.com.endpoint.rest.model.JStockMovement;
 import library.app.com.entity.StockMovement;
 import library.app.com.exception.NotFoundException;
+import library.app.com.repository.BookRepository;
 import library.app.com.repository.StockMovementRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -14,6 +17,9 @@ import java.util.List;
 public class StockMovementService {
 
     private final StockMovementRepository repository;
+    private final BookRepository bookRepository;
+
+    // ===== READ =====
 
     public List<StockMovement> getAll(int page, int pageSize) {
         return repository.findAll(PageRequest.of(page, pageSize))
@@ -33,5 +39,23 @@ public class StockMovementService {
                 .stream()
                 .map(StockMovement::from)
                 .toList();
+    }
+
+    // ===== CREATE =====
+
+    public StockMovement create(StockMovement movement) {
+        JBook book = bookRepository.findById(movement.getBookId())
+                .orElseThrow(() -> new NotFoundException("Book #" + movement.getBookId() + " not found"));
+
+        JStockMovement entity = JStockMovement.builder()
+                .type(movement.getType())
+                .quantity(movement.getQuantity())
+                .format(movement.getFormat())
+                .movementDate(movement.getMovementDate())
+                .note(movement.getNote())
+                .book(book)
+                .build();
+
+        return StockMovement.from(repository.save(entity));
     }
 }
