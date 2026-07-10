@@ -13,15 +13,15 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class SaleItem {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
-    private Integer quantity;
+  private Integer quantity;
 
-    private BigDecimal unitPrice;
+  private BigDecimal unitPrice;
 
-    @ManyToOne private JBook book;
+  @ManyToOne private JBook book;
 
-    @ManyToOne private Sale sale;
+  @ManyToOne private Sale sale;
 }

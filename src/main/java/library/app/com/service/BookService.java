@@ -26,14 +26,14 @@ public class BookService {
 
   public Book getById(Long id) {
     return repository
-            .findById(id)
-            .map(Book::from)
-            .orElseThrow(() -> new NotFoundException("Book #" + id + " not found"));
+        .findById(id)
+        .map(Book::from)
+        .orElseThrow(() -> new NotFoundException("Book #" + id + " not found"));
   }
 
   public JBook updateBook(Long id, JBook book) {
     JBook existingBook =
-            repository.findById(id).orElseThrow(() -> new RuntimeException("Book not found"));
+        repository.findById(id).orElseThrow(() -> new RuntimeException("Book not found"));
     existingBook.setTitle(book.getTitle());
     existingBook.setIsbn(book.getIsbn());
     existingBook.setPriceExTax(book.getPriceExTax());

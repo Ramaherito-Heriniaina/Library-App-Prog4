@@ -24,9 +24,9 @@ public class Sale {
     }
 
     return Sale.builder()
-            .id(jSale.getId())
-            .saleDate(jSale.getSaleDate())
-            .totalAmount(jSale.getTotalAmount())
-            .build();
+        .id(jSale.getId())
+        .saleDate(jSale.getSaleDate())
+        .totalAmount(jSale.getTotalAmount())
+        .build();
   }
 }
